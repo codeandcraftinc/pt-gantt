@@ -1,0 +1,122 @@
+{% extends 'layout.html' %}
+
+{% block style %}
+<style>
+.viewport {
+  border: 1px solid #ddd;
+  font-size: 0.8em;
+  max-width: 100%;
+  overflow-x: scroll;
+}
+.superwide {
+  min-width: 1400px;
+}
+.superwide th,
+.superwide td {
+  min-width: 85px;
+  text-align: left;
+}
+.superwide th:nth-child(1),
+.superwide td:nth-child(1) {
+  border-left: none;
+  border-right: 2px solid #ccc;
+  min-width: 150px;
+}
+.superwide .weekend {
+  color: #ddd;
+  background: #fff;
+}
+.superwide .weekend:nth-of-type(0) {
+  border-left: 2px solid #ccc;
+}
+.superwide .monday {
+  border-left: 2px solid #ccc;
+}
+.superwide .saturday {
+  border-left: 2px solid #ccc;
+}
+.superwide .today {
+  background: #ffff99;
+}
+.superwide .milestone {
+  background-color: #f6f6f6;
+  border: 1px solid #ddd;
+  color: inherit;
+  display: block;
+  padding: 5px;
+  text-decoration: none;
+}
+.superwide .milestone:hover {
+  background-color: #ededed;
+}
+.superwide .milestone + .milestone {
+  margin-top: 8px;
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>Simple PT Gantt</h1>
+      <div class="viewport">
+        <table class="table table-bordered table-striped superwide">
+          <thead>
+            <tr>
+            {% set weekends = ['Sat', 'Sun'] %}
+            {% for day in days %}
+              {% if loop.index == 1 %}<th></th>{% endif %}
+              {% if day.format('YYYY-MM-DD') == today.format('YYYY-MM-DD') %}
+              <th class="today">
+              {% elseif weekends.indexOf(day.format('ddd')) > -1 %}
+                {% if day.format('ddd') == 'Sat' %}
+                  <th class="weekend saturday">
+                {% else %}
+                  <th class="weekend sunday">
+                {% endif %}
+              {% elseif day.format('ddd') == 'Mon' %}
+              <th class="monday">
+              {% else %}
+              <th>
+              {% endif %}
+                {{ day.format('YYYY-MM-DD') }}
+              </th>
+            {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for project in projects %}
+              <tr>
+                <td>{{ project.name }}</td>
+                {% for day in days %}
+                  {% if day.format('YYYY-MM-DD') == today.format('YYYY-MM-DD') %}
+                  <td class="today">
+                  {% elseif weekends.indexOf(day.format('ddd')) > -1 %}
+                    {% if day.format('ddd') == 'Sat' %}
+                      <th class="weekend saturday">
+                    {% else %}
+                      <th class="weekend sunday">
+                    {% endif %}
+                  {% elseif day.format('ddd') == 'Mon' %}
+                  <td class="monday">
+                  {% else %}
+                  <td>
+                  {% endif %}
+                    {% for release in project.releases %}
+                      {% if day.format('YYYY-MM-DD') == release.deadlineMoment.format('YYYY-MM-DD') %}
+                        <a class="milestone" href="{{ release.url }}" target="_blank">{{ release.name }}</a>
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        <table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

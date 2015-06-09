@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <h1>Login</h1>
+      <form method="post" class="well">
+        <div class="form-group">
+          <label for="input-token">Tracker Token</label>
+          <input id="input-token" name="token" type="password" class="form-control input-lg" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
