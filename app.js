@@ -87,9 +87,12 @@ app.get('/', function ensureTokenExists(req, res, next) {
     deadlines = _(releases)
       .flatten()
       .pluck('deadline')
+      .compact()
       .map(Date.parse)
       .sort()
-      .map(function (v) { return moment.utc(v); })
+      .map(function (v) {
+        return moment.utc(v);
+      })
       .value();
 
     // collect complete range of days from today to latest release
@@ -99,7 +102,10 @@ app.get('/', function ensureTokenExists(req, res, next) {
     // compile projects/releases
     projects = projects.map(function (project, k) {
       project.releases = releases[k].map(function (release) {
-        release.deadlineMoment = moment.utc(release.deadline);
+        if (release.deadline) {
+          release.deadlineMoment = moment.utc(release.deadline);
+        }
+
         return release;
       });
 
